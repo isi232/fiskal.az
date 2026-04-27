@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+{% block title %}fiskal.az — Xəritə{% endblock %}
+{% block nav_map %}active{% endblock %}
+
+{% block nav %}
+<nav class="nav">
+  <a href="{% url 'home' %}" class="nav-logo">fiskal<span>.az</span></a>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" style="margin-left:auto;">🌙</button>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="map-wrap">
+
+  <div class="map-placeholder">
+    <div class="map-placeholder-ico">🗺️</div>
+    <div class="map-placeholder-txt">Bakı Şikayət Xəritəsi</div>
+    <div style="font-size:11px;color:var(--text3);margin-top:4px">Rayonlara görə şikayət paylanması</div>
+  </div>
+
+  {% if districts %}
+  <div>
+    <div class="section-title">Rayonlara görə sıralama</div>
+    <div class="district-list">
+      {% for district in districts %}
+      <div class="district-item">
+        <div class="district-rank">{{ forloop.counter }}</div>
+        <div class="district-info">
+          <div class="district-name">{{ district.name }}</div>
+          <div class="district-bar-bg">
+            <div class="district-bar" style="width:{{ district.bar_pct }}%"></div>
+          </div>
+        </div>
+        <div class="district-count">{{ district.complaint_count }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:30px;color:var(--text3)">
+    <div style="font-size:32px;margin-bottom:8px">📍</div>
+    <div style="font-size:14px">Hələ rayon məlumatı yoxdur</div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

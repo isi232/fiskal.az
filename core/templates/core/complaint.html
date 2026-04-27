@@ -1,0 +1,110 @@
+{% extends "core/base.html" %}
+{% block title %}fiskal.az — Şikayət{% endblock %}
+{% block nav_complaint %}active{% endblock %}
+
+{% block nav %}
+<nav class="nav">
+  <a href="{% url 'home' %}" class="nav-logo">fiskal<span>.az</span></a>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" style="margin-left:auto;">🌙</button>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title">Şikayət Əlavə Et</div>
+  <div class="page-sub">Çek almadığınız alış-veriş barədə məlumat verin</div>
+</div>
+
+<div class="steps-row">
+  <div class="step"><div class="step-num">1</div><div class="step-txt">Mağaza məlumatları</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-txt">Alış təfərrüatları</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-txt">AI yoxlaması</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-txt">ƏDV qaytarımı</div></div>
+</div>
+
+<div class="form-wrap">
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="success-banner">
+        <div class="ico">✅</div>
+        <div class="title">Şikayət Göndərildi!</div>
+        <div class="sub">AI sistemi şikayətinizi qəbul etdi.</div>
+        <div class="modal-steps">
+          <div class="modal-step">🤖 <span>AI şikayəti analiz edir — 4 saniyə</span></div>
+          <div class="modal-step">🏛️ <span>Vergi Xidmətinə bildiriş göndərilir</span></div>
+          <div class="modal-step">💰 <span>ƏDV (18%) hesabınıza köçürülür</span></div>
+        </div>
+      </div>
+      {% else %}
+      <div class="error-msg">{{ message }}</div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label class="form-label">Mağazanın adı</label>
+      <input class="form-input" type="text" name="shop_name" placeholder="məs. Bravo, Kontakt Home..." value="{{ form_data.shop_name|default:'' }}" required>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Rayon</label>
+        <select class="form-select" name="district">
+          <option value="">Seçin...</option>
+          {% for d in districts %}
+          <option value="{{ d }}" {% if form_data.district == d %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Məbləğ (₼)</label>
+        <input class="form-input" type="number" name="amount" step="0.01" min="0" placeholder="0.00" value="{{ form_data.amount|default:'' }}" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tarix</label>
+      <input class="form-input" type="date" name="date" value="{{ form_data.date|default:'' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Çek verilməmənin səbəbi</label>
+      <select class="form-select" name="reason">
+        <option value="">Seçin...</option>
+        <option value="cashier_refused" {% if form_data.reason == 'cashier_refused' %}selected{% endif %}>Kassir imtina etdi</option>
+        <option value="printer_broken" {% if form_data.reason == 'printer_broken' %}selected{% endif %}>Printer işləmir dedi</option>
+        <option value="system_down" {% if form_data.reason == 'system_down' %}selected{% endif %}>Sistem çöküb dedi</option>
+        <option value="no_receipt" {% if form_data.reason == 'no_receipt' %}selected{% endif %}>Çek yoxdur dedi</option>
+        <option value="other" {% if form_data.reason == 'other' %}selected{% endif %}>Başqa</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ətraflı izahat</label>
+      <textarea class="form-textarea" name="description" placeholder="Baş verənləri ətraflı izah edin...">{{ form_data.description|default:'' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Foto / Sübut (istəyə bağlı)</label>
+      <div class="upload-zone">
+        <div class="upload-ico">📎</div>
+        <div class="upload-label">Foto əlavə edin</div>
+        <div class="upload-sub">JPG, PNG, PDF — maks. 10MB</div>
+      </div>
+      <input type="file" id="fileInput" name="attachment" style="display:none" accept="image/*,.pdf">
+    </div>
+
+    <div class="ai-hint" style="margin-bottom:14px;">
+      <div class="ai-hint-ico">🤖</div>
+      <div class="ai-hint-txt">AI sistemi şikayətinizi analiz edəcək, mağazanı Vergi Xidmətinin bazası ilə müqayisə edəcək və ƏDV qaytarım miqdarını hesablayacaq.</div>
+    </div>
+
+    <button class="submit-btn" type="submit">Şikayəti Göndər →</button>
+  </form>
+</div>
+{% endblock %}

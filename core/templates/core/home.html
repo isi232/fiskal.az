@@ -1,0 +1,156 @@
+{% extends "core/base.html" %}
+{% block title %}fiskal.az — Ana Səhifə{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+<!-- Warning Banner -->
+{% if not request.user.userprofile.has_bank_card %}
+<div class="warn-banner">
+  <div class="warn-text">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+    <span>Bank kartı əlavə edilməyib. ƏDV geri qaytarılması üçün bank məlumatlarınızı daxil edin.</span>
+  </div>
+  <button class="warn-btn">Kart əlavə et</button>
+</div>
+{% endif %}
+
+<!-- Profile Strip -->
+<div class="profile-strip">
+  <div class="avatar">{{ request.user.username|first|upper }}</div>
+  <div class="profile-info">
+    <div class="profile-name">{{ request.user.userprofile.full_name|default:request.user.username }}</div>
+    <div class="profile-phone">{{ request.user.userprofile.phone|default:"Telefon əlavə edilməyib" }}</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n w">{{ stats.total }}</div><div class="stat-l">Şikayət</div></div>
+    <div class="stat"><div class="stat-n y">{{ stats.confirmed }}</div><div class="stat-l">Təsdiqləndi</div></div>
+    <div class="stat"><div class="stat-n g">₼{{ stats.refunded }}</div><div class="stat-l">Qaytarıldı</div></div>
+  </div>
+  <div class="no-card-pill">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+    </svg>
+    <span>Kart yoxdur</span>
+  </div>
+</div>
+
+<!-- AI Strip -->
+<div class="ai-strip">
+  <div class="ai-icon-wrap">
+    <svg width="18" height="18" fill="none" stroke="var(--green)" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+    </svg>
+  </div>
+  <div>
+    <div class="ai-label">AI Analiz Aktiv</div>
+    <div class="ai-sub">Şikayətlər süni intellekt ilə yoxlanılır və qruplaşdırılır</div>
+  </div>
+  <div class="live-pill"><div class="pulse"></div><span>Canlı</span></div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(this)">Edilən reviewlar</div>
+  <div class="tab" onclick="switchTab(this)">Təsdiqlənmiş reviewlar</div>
+</div>
+
+<!-- Cards Grid -->
+<div class="cards-grid">
+  {% for complaint in complaints %}
+  <div class="card" data-status="{{ complaint.status }}" data-shop="{{ complaint.shop_name }}" data-loc="{{ complaint.district }} r., Bakı">
+    <div class="card-top">
+      <div class="shop-ico">🛒</div>
+      <div class="shop-info">
+        <div class="shop-nm">{{ complaint.shop_name }}</div>
+        <div class="shop-loc">{{ complaint.district }} r., Bakı</div>
+      </div>
+      {% if complaint.status == 'returned' %}
+        <span class="badge b-green">Qaytarıldı</span>
+      {% elif complaint.status == 'confirmed' %}
+        <span class="badge b-yellow">Təsdiqləndi</span>
+      {% else %}
+        <span class="badge b-blue">Yoxlanılır</span>
+      {% endif %}
+    </div>
+    <div class="stars">{% for i in complaint.stars_range %}★{% endfor %}{% for i in complaint.empty_stars_range %}☆{% endfor %}</div>
+    <div class="review-txt">"{{ complaint.description|default:"Şikayət ətraflı izahat olmadan göndərildi." }}"</div>
+    <div class="card-foot">
+      <span class="card-date">{{ complaint.date|date:"d.m.Y" }}</span>
+      {% if complaint.status == 'returned' %}
+        <span class="card-amt">+₼{{ complaint.vat_amount }} ƏDV</span>
+      {% elif complaint.status == 'confirmed' %}
+        <span style="color:var(--yellow);font-size:11px;">Gözlənilir...</span>
+      {% else %}
+        <span class="ai-processing">
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+          <span>AI yoxlayır</span>
+        </span>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div class="card" data-status="returned" data-shop="Bravo Supermarket" data-loc="Nərimanov r., Bakı">
+    <div class="card-top">
+      <div class="shop-ico">🛒</div>
+      <div class="shop-info">
+        <div class="shop-nm">Bravo Supermarket</div>
+        <div class="shop-loc">Nərimanov r., Bakı</div>
+      </div>
+      <span class="badge b-green">Qaytarıldı</span>
+    </div>
+    <div class="stars">★★★☆☆</div>
+    <div class="review-txt">"Kassir çek vermədi, soruşanda printer işləmir dedi. 3-cü dəfədir eyni şey."</div>
+    <div class="card-foot">
+      <span class="card-date">24.04.2025</span>
+      <span class="card-amt">+₼1.53 ƏDV</span>
+    </div>
+  </div>
+  <div class="card" data-status="confirmed" data-shop="Kontakt Home" data-loc="Nəsimi r., Bakı">
+    <div class="card-top">
+      <div class="shop-ico">🏪</div>
+      <div class="shop-info">
+        <div class="shop-nm">Kontakt Home</div>
+        <div class="shop-loc">Nəsimi r., Bakı</div>
+      </div>
+      <span class="badge b-yellow">Təsdiqləndi</span>
+    </div>
+    <div class="stars">★★★★☆</div>
+    <div class="review-txt">"340 AZN-lik elektrik cihazı aldım. Çek vermək istəmədilər."</div>
+    <div class="card-foot">
+      <span class="card-date">22.04.2025</span>
+      <span style="color:var(--yellow);font-size:11px;">Gözlənilir...</span>
+    </div>
+  </div>
+  <div class="card" data-status="reviewing" data-shop="Günəş Əczaçılıq" data-loc="Yasamal r., Bakı">
+    <div class="card-top">
+      <div class="shop-ico">💊</div>
+      <div class="shop-info">
+        <div class="shop-nm">Günəş Əczaçılıq</div>
+        <div class="shop-loc">Yasamal r., Bakı</div>
+      </div>
+      <span class="badge b-blue">Yoxlanılır</span>
+    </div>
+    <div class="stars">★★★★☆</div>
+    <div class="review-txt">"Dərman üçün 18 AZN ödədim. Çek soruşdum, sistem çöküb dedilər."</div>
+    <div class="card-foot">
+      <span class="card-date">20.04.2025</span>
+      <span class="ai-processing">
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+        <span>AI yoxlayır</span>
+      </span>
+    </div>
+  </div>
+  {% endfor %}
+
+  <a href="{% url 'complaint' %}" class="card add-card">
+    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+    <span>Yeni şikayət əlavə et</span>
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="az" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiskal.az — Giriş</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'core/css/main.css' %}">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <a href="/">Fiskal<span>.az</span></a>
+    </div>
+    <div class="auth-title">Xoş gəlmisiniz</div>
+    <div class="auth-sub">Hesabınıza daxil olun</div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="{% if message.tags == 'error' %}auth-error{% else %}auth-success{% endif %}" style="margin-bottom:16px">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="auth-error" style="margin-bottom:16px">
+        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div>
+        <input class="auth-input" type="text" name="username" placeholder="İstifadəçi adı" value="{{ form.username.value|default:'' }}" required autofocus>
+        {% if form.username.errors %}<div class="form-error">{{ form.username.errors.0 }}</div>{% endif %}
+      </div>
+      <div>
+        <input class="auth-input" type="password" name="password" placeholder="Şifrə" required>
+        {% if form.password.errors %}<div class="form-error">{{ form.password.errors.0 }}</div>{% endif %}
+      </div>
+      <button type="submit" class="auth-btn">Daxil ol →</button>
+    </form>
+
+    <div class="auth-divider" style="margin:20px 0">və ya</div>
+    <div class="auth-link">
+      Hesabınız yoxdur? <a href="{% url 'register' %}">Qeydiyyat</a>
+    </div>
+  </div>
+</div>
+<script src="{% static 'core/js/main.js' %}"></script>
+</body>
+</html>

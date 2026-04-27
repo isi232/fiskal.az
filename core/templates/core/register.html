@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="az" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fiskal.az — Qeydiyyat</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'core/css/main.css' %}">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <a href="/">fiskal<span>.az</span></a>
+    </div>
+    <div class="auth-title">Qeydiyyat</div>
+    <div class="auth-sub">Yeni hesab yaradın</div>
+
+    {% if form.non_field_errors %}
+      <div class="auth-error" style="margin-bottom:16px">
+        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div>
+        <input class="auth-input" type="text" name="username" placeholder="İstifadəçi adı" value="{{ form.username.value|default:'' }}" required autofocus>
+        {% if form.username.errors %}<div class="form-error">{{ form.username.errors.0 }}</div>{% endif %}
+      </div>
+      <div>
+        <input class="auth-input" type="text" name="full_name" placeholder="Ad Soyad" value="{{ form.full_name.value|default:'' }}" required>
+        {% if form.full_name.errors %}<div class="form-error">{{ form.full_name.errors.0 }}</div>{% endif %}
+      </div>
+      <div>
+        <input class="auth-input" type="tel" name="phone" placeholder="+994 XX XXX XX XX" value="{{ form.phone.value|default:'' }}">
+        {% if form.phone.errors %}<div class="form-error">{{ form.phone.errors.0 }}</div>{% endif %}
+      </div>
+      <div>
+        <input class="auth-input" type="password" name="password1" placeholder="Şifrə" required>
+        {% if form.password1.errors %}<div class="form-error">{{ form.password1.errors.0 }}</div>{% endif %}
+      </div>
+      <div>
+        <input class="auth-input" type="password" name="password2" placeholder="Şifrəni təkrar daxil edin" required>
+        {% if form.password2.errors %}<div class="form-error">{{ form.password2.errors.0 }}</div>{% endif %}
+      </div>
+      <button type="submit" class="auth-btn">Qeydiyyatdan keç →</button>
+    </form>
+
+    <div class="auth-divider" style="margin:20px 0">və ya</div>
+    <div class="auth-link">
+      Artıq hesabınız var? <a href="{% url 'login' %}">Daxil ol</a>
+    </div>
+  </div>
+</div>
+<script src="{% static 'core/js/main.js' %}"></script>
+</body>
+</html>

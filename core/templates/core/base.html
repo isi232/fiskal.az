@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="az" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}fiskal.az{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'core/css/main.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% block nav %}
+<nav class="nav">
+  <a href="{% url 'home' %}" class="nav-logo">fiskal<span>.az</span></a>
+  <input class="nav-search" type="text" placeholder="Mağaza axtar...">
+  <button class="nav-btn">Axtar</button>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+</nav>
+{% endblock %}
+
+<div class="page">
+  {% block content %}{% endblock %}
+</div>
+
+<nav class="bottom-nav">
+  <a href="{% url 'home' %}" class="bnav-item {% block nav_home %}{% endblock %}">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Ana</span>
+  </a>
+  <a href="{% url 'complaint' %}" class="bnav-item {% block nav_complaint %}{% endblock %}">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <span>Şikayət</span>
+  </a>
+  <a href="{% url 'analytics' %}" class="bnav-item {% block nav_analytics %}{% endblock %}">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span>Analitika</span>
+  </a>
+  <a href="{% url 'map' %}" class="bnav-item {% block nav_map %}{% endblock %}">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    <span>Xəritə</span>
+  </a>
+  <a href="{% url 'profile' %}" class="bnav-item {% block nav_profile %}{% endblock %}">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </a>
+</nav>
+
+<script src="{% static 'core/js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% extends "core/base.html" %}
+{% block title %}fiskal.az — Profil{% endblock %}
+{% block nav_profile %}active{% endblock %}
+
+{% block nav %}
+<nav class="nav">
+  <a href="{% url 'home' %}" class="nav-logo">fiskal<span>.az</span></a>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" style="margin-left:auto;">🌙</button>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrap">
+  <div class="profile-card">
+    <div class="profile-avatar-lg">{{ request.user.username|first|upper }}</div>
+    <div class="profile-card-name">{{ profile.full_name|default:request.user.username }}</div>
+    <div class="profile-card-phone">{{ profile.phone|default:"Telefon əlavə edilməyib" }}</div>
+    <div class="profile-card-since">Üzv olduğu tarix: {{ profile.member_since }}</div>
+  </div>
+
+  <div class="stats-big">
+    <div class="stat-big-card">
+      <div class="stat-big-n" style="color:var(--text)">{{ stats.total }}</div>
+      <div class="stat-big-l">Şikayət</div>
+    </div>
+    <div class="stat-big-card">
+      <div class="stat-big-n" style="color:var(--yellow)">{{ stats.confirmed }}</div>
+      <div class="stat-big-l">Təsdiqləndi</div>
+    </div>
+    <div class="stat-big-card">
+      <div class="stat-big-n" style="color:var(--green)">₼{{ stats.refunded }}</div>
+      <div class="stat-big-l">Qazandım</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Son aktivlik</div>
+    <div class="activity-list">
+      {% for item in activity %}
+      <div class="activity-item">
+        <div class="act-ico" style="background:{% if item.status == 'returned' %}var(--green-dim2){% elif item.status == 'confirmed' %}var(--yellow-dim){% else %}var(--blue-dim){% endif %}">
+          {% if item.status == 'returned' %}✅{% elif item.status == 'confirmed' %}⏳{% else %}🤖{% endif %}
+        </div>
+        <div class="act-info">
+          <div class="act-nm">{{ item.shop_name }}</div>
+          <div class="act-dt">{{ item.date|date:"d.m.Y" }} · {{ item.status_label }}</div>
+        </div>
+        <div class="act-amt" style="color:{% if item.status == 'returned' %}var(--green){% elif item.status == 'confirmed' %}var(--yellow){% else %}var(--blue){% endif %}">
+          {% if item.status == 'returned' %}+{% endif %}₼{{ item.vat_amount }}
+        </div>
+      </div>
+      {% empty %}
+      <div class="activity-item">
+        <div class="act-ico" style="background:var(--blue-dim)">🤖</div>
+        <div class="act-info">
+          <div class="act-nm">Hələ şikayət yoxdur</div>
+          <div class="act-dt">İlk şikayətinizi əlavə edin</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Parametrlər</div>
+    <div class="menu-list">
+      <a href="{% url 'add_card' %}" class="menu-item">
+        <div class="menu-ico" style="background:var(--blue-dim)">💳</div>
+        <div class="menu-label">Bank kartı</div>
+        <div class="menu-arrow">›</div>
+      </a>
+      <div class="menu-item" onclick="openNotifModal()">
+        <div class="menu-ico" style="background:var(--green-dim2)">🔔</div>
+        <div class="menu-label">Bildirişlər</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="openLangModal()">
+        <div class="menu-ico" style="background:var(--yellow-dim)">🌐</div>
+        <div class="menu-label">Dil</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="openPrivacyModal()">
+        <div class="menu-ico" style="background:var(--red-dim)">🔒</div>
+        <div class="menu-label">Məxfilik</div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="openSupportModal()">
+        <div class="menu-ico" style="background:var(--bg4)">📞</div>
+        <div class="menu-label">Dəstək</div>
+        <div class="menu-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="logout-btn">🚪 Çıxış</button>
+  </form>
+
+</div>
+{% endblock %}

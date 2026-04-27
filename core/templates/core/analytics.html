@@ -1,0 +1,80 @@
+{% extends "core/base.html" %}
+{% block title %}fiskal.az — Analitika{% endblock %}
+{% block nav_analytics %}active{% endblock %}
+
+{% block nav %}
+<nav class="nav">
+  <a href="{% url 'home' %}" class="nav-logo">fiskal<span>.az</span></a>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" style="margin-left:auto;">🌙</button>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-wrap">
+
+  <div class="chart-card">
+    <div class="chart-title">
+      <span>Aylıq Şikayət Statistikası</span>
+      <span style="font-size:11px;color:var(--text3);font-weight:400">Son 7 ay</span>
+    </div>
+    <div class="chart-bars">
+      {% for val in chart_data %}
+      <div class="chart-bar-wrap">
+        <div class="chart-bar" data-val="{{ val }}" style="height:0%"></div>
+        <div class="chart-bar-label">{{ forloop.counter }}ay</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if top_shops %}
+  <div class="chart-card">
+    <div class="chart-title">En Çox Şikayət Alan Mağazalar</div>
+    <div class="shop-risk-list">
+      {% for shop in top_shops %}
+      <div class="shop-risk-item">
+        <div class="shop-risk-top">
+          <span class="shop-risk-name">{{ shop.name }}</span>
+          <span class="shop-risk-count">{{ shop.complaint_count }} şikayət</span>
+        </div>
+        <div class="risk-bar-bg">
+          <div class="risk-bar" style="width:{{ shop.risk_pct }}%"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="chart-card" style="text-align:center;padding:30px">
+    <div style="font-size:32px;margin-bottom:8px">📊</div>
+    <div style="font-size:14px;color:var(--text3)">Hələ kifayət qədər məlumat yoxdur</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px">Şikayətlər əlavə olunduqca statistika görünəcək</div>
+  </div>
+  {% endif %}
+
+  <div class="chart-card">
+    <div class="chart-title">AI Analiz Xülasəsi</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg4);border-radius:8px">
+        <span style="font-size:13px">Ümumi şikayət</span>
+        <span style="font-size:13px;font-weight:700;font-family:var(--mono);color:var(--text)">{{ total_count }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg4);border-radius:8px">
+        <span style="font-size:13px">Təsdiqlənmiş</span>
+        <span style="font-size:13px;font-weight:700;font-family:var(--mono);color:var(--yellow)">{{ confirmed_count }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg4);border-radius:8px">
+        <span style="font-size:13px">Qaytarılmış ƏDV</span>
+        <span style="font-size:13px;font-weight:700;font-family:var(--mono);color:var(--green)">₼{{ total_refunded }}</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', renderChart);
+</script>
+{% endblock %}
