@@ -1,3 +1,11 @@
+<<<<<<< HEAD
 Django>=4.2,<5.0
 gunicorn>=21.2.0
 whitenoise>=6.6.0
+=======
+django>=4.2
+gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary
+>>>>>>> be6253f (fixed_ideas)
