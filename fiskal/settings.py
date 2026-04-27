@@ -88,8 +88,8 @@ MESSAGE_TAGS = {
     messages_const.SUCCESS: 'success',
     messages_const.WARNING: 'warning',
     messages_const.ERROR: 'error',
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> be6253f (fixed_ideas)
+
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
